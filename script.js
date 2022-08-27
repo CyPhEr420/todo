@@ -72,7 +72,7 @@ function deleteCheck(e) {
     // CHECK MARK 
     if (item.classList[0] === "completed-btn") {
         const todo = item.parentElement;
-
+        localStorageToggleCompleted(todo);
         todo.classList.toggle("completed")
 
     }
@@ -110,7 +110,10 @@ filterOption.onchange = function filterTodo(e) {
 
 function saveToLocalStorage(todo) {
     let todos = checkLocalStorage();
-    todos.push(todo);
+    todos.push({
+        value: todo,
+        completed: false
+    });
     localStorage.setItem('todos', JSON.stringify(todos));
 }
 
@@ -124,6 +127,9 @@ function getTodos() {
         const newTodo = document.createElement('li');
         newTodo.classList.add("todo-item");
         todoDiv.appendChild(newTodo);
+
+        todo.completed ? todoDiv.classList.add('completed') : null;
+
 
         // CHECK MARK BUTTON
         const completedBtn = document.createElement('button');
@@ -139,7 +145,7 @@ function getTodos() {
 
         // APPEND TO LIST
 
-        newTodo.innerText = todo;
+        newTodo.innerText = todo.value;
         todoInput.value = "";
         todoList.appendChild(todoDiv);
 
@@ -152,14 +158,10 @@ function getTodos() {
 }
 
 function removeFromLocalStorage(todo) {
-    let todos;
-    if (localStorage.getItem('todos') === null) {
-        todos = [];
-    } else {
-        todos = JSON.parse(localStorage.getItem('todos'))
-    }
+    let todos = checkLocalStorage();
+
     const todoIndex = todo.childNodes[0].innerText;
-    todos.splice(todos.indexOf(todoIndex), 1);
+    todos.splice(todos.findIndex((item) => item.value === todoIndex), 1);
     localStorage.setItem('todos', JSON.stringify(todos));
 }
 
@@ -169,5 +171,12 @@ function checkLocalStorage() {
     } else {
         return JSON.parse(localStorage.getItem('todos'))
     }
+}
 
+function localStorageToggleCompleted(todo) {
+    let todos = checkLocalStorage();
+    let todoContent = todo.childNodes[0].innerText;
+    let todoIdx = todos.findIndex((item) => item.value === todoContent);
+    todos[todoIdx].completed = !todos[todoIdx].completed;
+    localStorage.setItem('todos', JSON.stringify(todos))
 }
