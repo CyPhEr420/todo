@@ -177,6 +177,7 @@ function localStorageToggleCompleted(todo) {
     let todos = checkLocalStorage();
     let todoContent = todo.childNodes[0].innerText;
     let todoIdx = todos.findIndex((item) => item.value === todoContent);
+    console.log({ todos, todoIdx })
     todos[todoIdx]?.completed = !todos[todoIdx]?.completed;
     localStorage.setItem('todos', JSON.stringify(todos))
 }
